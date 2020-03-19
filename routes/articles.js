@@ -1,18 +1,17 @@
-var config = require('../token-config.js');
-var jwt = require('jsonwebtoken');
+const config = require('../token-config.js');
+const jwt = require('jsonwebtoken');
 
 
 app.use('/articles', function (request, response, next) {
   const data = request.query;
 
-  var token = data.access_token
-  console.log(token);
+  const token = data.access_token
   if (!token) return response.status(401).send({ auth: false, message: 'No token provided.'});
   
   jwt.verify(token, config.secret, function(err, decoded) {
     if (err) return response.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
     
-    db.query('SELECT * FROM users where id=? AND password=?', [decoded.id, decoded.password],function(err, rows, fields) {
+    db.query('SELECT * FROM users WHERE id=? AND password=?', [decoded.id, decoded.password], (err, rows, fields) => {
       if (err) {
         response.status(400).send(err);
       }else{
@@ -24,7 +23,7 @@ app.use('/articles', function (request, response, next) {
 
 app.get('/articles', (request, response) => {
 
-  db.query('SELECT * FROM articles', function(err, rows, fields) {
+  db.query('SELECT * FROM articles', (err, rows, fields) => {
     if (err) {
       response.status(400).send(err);
     }else{
@@ -36,13 +35,17 @@ app.get('/articles', (request, response) => {
 app.delete('/articles', (request, response) => {
  const data = request.query;
   if (data.id){
-    db.query(`DELETE FROM articles WHERE id=?`, [data.id], function(err, rows, fields) {
+    console.log(data.id);
+    
+    db.query(`DELETE FROM articles WHERE id=?`, [data.id], (err, rows, fields) => {
       if (err) {
         response.status(400).send({error: 'Unable to delete article ' + err});
       }else {
         response.send({status: 'OK'});
       }
     });
+  }else{
+    response.status(400).send({error: `id "${data.id}" is require!!!`})
   }
 });
 
@@ -51,16 +54,20 @@ app.post('/articles', (request, response) => {
   if (data.title && data.body){
     if (data.id){
       db.query(`UPDATE articles SET title = ?, body = ?, updated_date = ? WHERE id = ?`, 
-              [data.title, data.body, new Date(), data.id], function(err, rows, fields) {
+              [data.title, data.body, new Date(), data.id], (err, rows, fields) => {
         if (err) {
           response.status(400).send({error: 'Unable to update article ' + err});
         }else {
-          response.send({status: 'OK'});
+          if(rows.length === undefined){
+            response.status(400).send({ error: `Id: "${data.id}" not found` })
+          }else{ 
+            response.send({ status: 'OK' });
+          }
         }
       });
     }else{
       db.query(`INSERT INTO articles VALUES(?, ?, ?, ?, ?)`, 
-              [null, data.title, data.body, new Date(), new Date], function(err, rows, fields) {
+              [null, data.title, data.body, new Date(), new Date], (err, rows, fields) => {
         if (err) {
           response.status(400).send({error: 'Unable to save new article' + err});
         }else {
