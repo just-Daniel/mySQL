@@ -35,8 +35,6 @@ app.get('/articles', (request, response) => {
 app.delete('/articles', (request, response) => {
  const data = request.query;
   if (data.id){
-    console.log(data.id);
-    
     db.query(`DELETE FROM articles WHERE id=?`, [data.id], (err, rows, fields) => {
       if (err) {
         response.status(400).send({error: 'Unable to delete article ' + err});
