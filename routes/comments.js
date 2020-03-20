@@ -26,8 +26,8 @@ app.get('/comments', (request, response) => {
 app.post('/comments', (request, response) => {
     if(request.query.description){
         if(request.query.id){
-           db.query(`UPDATE comments SET description = ?, article_id = ?, updated_date = ? WHERE id = ?`, 
-                   [request.query.description, request.query.article_id, new Date(), request.query.id], (err, rows, fields) => {
+           db.query(`UPDATE comments SET description = ?, article_id = ?, updated_date = ? WHERE id = ? AND user_id = ?`, 
+                   [request.query.description, request.query.article_id, new Date(), request.query.id, request.query.user_id], (err, rows, fields) => {
                     if(err){
                         response.status(404).send({error: `id: ${request.query.id}, not found!` + err});
                     }else{
@@ -35,8 +35,8 @@ app.post('/comments', (request, response) => {
                     }
                 })
         }else{
-             db.query(`INSERT INTO comments VALUES (?, ?, ?, ?, ?)`, 
-                     [null, request.query.description, request.query.article_id, new Date(), new Date()], (err, rows, fields) => {
+             db.query(`INSERT INTO comments VALUES (?, ?, ?, ?, ?, ?)`, 
+                     [null, request.query.description, request.query.article_id, new Date(), new Date(), request.query.user_id], (err, rows, fields) => {
                 if (err) {
                     response.status(400).send({error: 'Unable to save new comment' + err});
                 }else {
@@ -52,11 +52,12 @@ app.post('/comments', (request, response) => {
 
 
 app.delete('/comments', (request, response) => {
-    if(request.query.id){
-        db.query(`DELETE FROM comments WHERE id = (?)`, 
-                [request.query.id], (err, rows, fields) => { 
+  const data = request.query; 
+    if(data.id){
+        db.query(`DELETE FROM comments WHERE id = ? AND user_id = ?`, 
+                [data.id, data.user_id], (err, rows, fields) => { 
             if(err){
-                response.status(404).send({status: `article_id: "${request.query.id}" deleted!`  })
+                response.status(404).send({error: `Unable to deleted comment` + err })
             }else{
                 response.send({status: "OK"})
             }
