@@ -12,6 +12,29 @@ app.get('/auth', (request, response) => {
   });
 });
 
+app.use('*', function (request, response, next) {
+
+  if(request.baseUrl === "/register" && request.baseUrl === "/login"){
+    next();
+  }else{ 
+    const data = request.query;
+    const token = data.access_token
+    if (!token) return response.status(401).send({ auth: false, message: 'No token provided.'});
+  
+    jwt.verify(token, config.secret, function(err, decoded) {
+      if (err) return response.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+    
+      db.query('SELECT * FROM users WHERE id=? AND password=?', 
+              [decoded.id, decoded.password], (err, rows, fields) => {
+                if (err) {
+                   response.status(400).send(err);
+                }else{
+                  next();
+                }
+        });
+    });
+  }
+});
 
 
 app.post('/register', (request, response) => {
