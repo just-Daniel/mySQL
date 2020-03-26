@@ -13,7 +13,7 @@ app.get('/auth', (request, response) => {
 });
 
 app.use('*', function(request, response, next) {
-  if (request.baseUrl === '/register' && request.baseUrl === '/login') {
+  if (request.baseUrl === '/register' || request.baseUrl === '/login') {
     next();
   } else {
     const data = request.query;
