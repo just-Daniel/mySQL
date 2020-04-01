@@ -13,6 +13,16 @@ app.use('*', function(request, response, next) {
   }
 });
 
+app.get('/auth', (request, response, next) => {
+  db.query('SELECT * FROM users', (err, rows, fields) => {
+    if (err) {
+      response.status(400).send(err);
+    } else {
+      response.send(rows);
+    }
+  });
+});
+
 
 app.post('/register', function(req, response) {
   const data = req.query;
