@@ -16,7 +16,7 @@ require('./db/db');
 
 require('./routes/articles');
 require('./routes/comments');
-require('./routes/auth');
+require('./routes/auth/auth');
 
 
 app.listen(3000, '127.0.0.1', function() {
