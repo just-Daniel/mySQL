@@ -11,12 +11,13 @@ const cors = require('cors');
 
 app = express();
 app.use(cors());
+app.use(express.json());
 
 require('./db/db');
 
+require('./routes/auth/auth');
 require('./routes/articles');
 require('./routes/comments');
-require('./routes/auth/auth');
 
 
 app.listen(3000, '127.0.0.1', function() {
