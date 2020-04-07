@@ -54,7 +54,7 @@ app.post('/login', function(req, response) {
           if (rows.length === 0) {
             response.status(400).send({error: 'Username or password is incorrect'});
           } else {
-            const token = jwt.sign({id: rows.id, password: hashedPassword},
+            const token = jwt.sign({id: rows[0].id, password: hashedPassword},
                 config.secret, {
                   expiresIn: 86400, // expires in 24 hours
                 });

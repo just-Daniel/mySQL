@@ -2,14 +2,10 @@ const tokenUtils = require('./auth/token-utils');
 const articlesDac = require('../dac/articles');
 
 app.get('/articles', (request, response) => {
-  // articlesDac.getAllArticles();
-  db.query('SELECT * FROM articles', (err, rows, fields) => {
-    if (err) {
-      response.status(400).send(err);
-    } else {
-      response.send(rows);
-    }
-  });
+  tokenUtils.getDecodedToken(request)
+      .then((decoded) => articlesDac.getAllArticles()
+          .then((articlesStatus) => response.send(articlesStatus)))
+      .catch((err) => response.status(err.status).send(err.message));
 });
 
 app.post('/articles', (request, response) => {
@@ -19,14 +15,14 @@ app.post('/articles', (request, response) => {
     if (data.id) {
       tokenUtils.getDecodedToken(request)
           .then((decoded) => articlesDac.updateArticles(
-              data.id, data.title, data.body, decoded.id))
+              data.id, data.title, data.body, decoded.id)
+              .then((articlesStatus) => response.send(articlesStatus)))
           .catch((err) => response.status(err.status).send(err.message));
     } else {
       tokenUtils.getDecodedToken(request)
-          .then((decoded) => {
-            console.log(decoded);
-            articlesDac.insertArticles(data.title, data.body, decoded.id);
-          })
+          .then((decoded) => articlesDac.insertArticles(
+              data.title, data.body, decoded.id)
+              .then((articlesStatus) => response.send(articlesStatus)))
           .catch((err) => response.status(err.status).send(err.message));
     }
   } else {
@@ -39,7 +35,8 @@ app.delete('/articles', (request, response) => {
   const data = request.query;
   if (data.id) {
     tokenUtils.getDecodedToken(request)
-        .then((decoded) => articlesDac.deleteArticles(data.id, decoded.id))
+        .then((decoded) => articlesDac.deleteArticles(data.id, decoded.id)
+            .then((deleteStatus) => response.send(deleteStatus)))
         .catch((error) => response.status(error.status).send(error.message));
   } else {
     response.status(400).send({error: `id "${data.id}" is require!!!`});

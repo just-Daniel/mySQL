@@ -13,7 +13,6 @@ module.exports = {
       "ecmaVersion": 2018
   },
   "rules": {
-    "require-jsdoc" : 0,
     "max-len": ["error", { "code": 90 } ]
   }
 };

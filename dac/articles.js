@@ -1,13 +1,11 @@
 const ResponseError = require('../routes/auth/response-error');
 
 const updateArticles = (id, title, body, decodedId) =>{
-  const json = JSON.stringify;
   const promise = new Promise((resolve, reject) => {
     db.query('SELECT * FROM articles WHERE id = ?', [id], (err, rows, fields) =>{
       if (err) {
         reject(new ResponseError(err, 400));
       } else {
-        console.log('DECODED: ' + json(rows[0].user_id) + ' AND ' + decodedId);
         if (rows[0].user_id === decodedId) {
           db.query(`UPDATE articles SET title= ?, body= ?, updated_date= ? WHERE id= ?`,
               [title, body, new Date(), id], (err, rows, fields) => {
@@ -73,20 +71,20 @@ const deleteArticles = (id, decodedId) => {
   return promise;
 };
 
-// const getAllArticles = () => {
-//   const promise = new Promise((resolve, reject) => {
-//     db.query('SELECT * FROM articles', (err, rows, fields) => {
-//       if (err) {
-//         reject(new ResponseError(err, 400));
-//       } else {
-//         resolve(rows);
-//       }
-//     });
-//   });
-//   return promise;
-// };
+const getAllArticles = () => {
+  const promise = new Promise((resolve, reject) => {
+    db.query('SELECT * FROM articles', [], (err, rows, fields) => {
+      if (err) {
+        reject(new ResponseError(err, 400));
+      } else {
+        resolve(rows);
+      }
+    });
+  });
+  return promise;
+};
 
 module.exports.updateArticles = updateArticles;
 module.exports.insertArticles = insertArticles;
 module.exports.deleteArticles = deleteArticles;
-// module.exports.getAllArticles = getAllArticles;
+module.exports.getAllArticles = getAllArticles;

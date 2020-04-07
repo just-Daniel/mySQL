@@ -24,7 +24,7 @@ const updateComments = (id, decodedId, description) => {
               `UPDATE comments SET description = ?, updated_date = ? WHERE id = ?`,
               [description, new Date(), id], (err, rows, fields) => {
                 if (err) {
-                  reject(new ResponseError(err, 404));
+                  reject(new ResponseError('Unable to update ' + err, 404));
                 } else {
                   resolve({status: 'OK!'});
                 }
@@ -40,10 +40,10 @@ const updateComments = (id, decodedId, description) => {
   return promise;
 };
 
-const insertComments = (description, decodedId) => {
+const insertComments = (description, article_id, decodedId) => {
   const promise = new Promise((resolve, reject) => {
     db.query(`INSERT INTO comments VALUES (?, ?, ?, ?, ?, ?)`,
-        [null, description, new Date(), new Date(), decodedId],
+        [null, description, article_id, new Date(), new Date(), decodedId],
         (err, rows, fields) => {
           if (err) {
             reject(new ResponseError('Unable to save new comment ' + err, 400));
@@ -52,7 +52,6 @@ const insertComments = (description, decodedId) => {
           }
         });
   });
-  console.log('CHECK: ' + JSON.stringify(promise));
   return promise;
 };
 

@@ -35,6 +35,7 @@ const getDecodedToken = (request) => {
       resolve(decoded);
     });
   });
+
   return promise;
 };
 
