@@ -1,7 +1,6 @@
 {
   "name": "expressjs-sqllite",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "start": "nodemon server.js",
@@ -23,5 +22,14 @@
     "eslint": "^6.8.0",
     "eslint-config-google": "^0.14.0",
     "nodemon": "^2.0.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/just-Daniel/mySQL.git"
+  },
+  "bugs": {
+    "url": "https://github.com/just-Daniel/mySQL/issues"
+  },
+  "homepage": "https://github.com/just-Daniel/mySQL#readme",
+  "description": ""
 }
